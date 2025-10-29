@@ -3,47 +3,88 @@ pragma solidity >=0.8.0;
 import {IERC20} from "./interface/IERC20.sol";
 
 contract ERC20 is IERC20 {
-    string public name = "AmentaSanctum";
-    string public symbol = "AMS";
+    string public name = "fre ";
+    string public symbol = "rettr";
     uint8 public decimals = 18;
     uint private _totalSupply;
 
     mapping(address account => uint256) private _balances;
     mapping(address owner => mapping(address spender => uint256)) private _allowances;
 
-    constructor(uint private _totalSupply,uint private _balance) {
-        _totalSupply = 10 * (10 ** uint256(decimals));
+    constructor(uint initialSupply) {
+        _totalSupply = initialSupply * 10 ** uint256(decimals);
         _balances[msg.sender] = _totalSupply;
-        emit Transfert(address indexed from, adress indexed to, uint256 value);
+        emit Transfer(address(0), msg.sender,_totalSupply);
     }
         
         
-    function totalSupply() external view override returns (uint256);
+    function totalSupply() public view override returns (uint256) {
+        return _totalSupply;
+    }
 
-    /// @notice Returns the amount of tokens owned by `account`.
-    function balanceOf(address account) external view override returns (uint256);
 
-    /// @notice Moves `amount` tokens from the caller's account to `to`.
-    function transfer(address to, uint256 amount) external returns (bool);
+    function balanceOf(address account) public view override returns (uint256) {
+        return _balances[account];
+    }
 
-    /// @notice Returns the remaining number of tokens that `spender` is allowed
-    /// to spend on behalf of `owner`
-    function allowance(address owner, address spender) external view returns (uint256);
+    function _transfer(address from, address to, uint256 value) private returns (bool) {
+        if (from == address(0)) {
+            revert("Invalid Provider");
+        }
+        if (to = address(0)) {
+            revert("Invalid Sender");
+        }
+        if (_balances[from] < value) {
+            revert("Insuffisant found");
 
-    /// @notice Sets `amount` as the allowance of `spender` over the caller's tokens.
-    /// @dev Be aware of front-running risks: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-    function approve(address spender, uint256 amount) external returns (bool);
+        }
 
-    /// @notice Moves `amount` tokens from `from` to `to` using the allowance mechanism.
-    /// `amount` is then deducted from the caller's allowance.
-    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+        _balances[from] -= value;
+        _balances[to] += value;
+        emit Transfer(from, to, value);
+    }
+        
+    
+    function transfer(address to, uint256 value) public override returns (bool){
+        _transfer(msg.sender, to, value);
+        return true;
+    }
 
-    /// @notice Returns the name of the token.
-    function name() external view returns (string memory);
 
-    /// @notice Returns the symbol of the token.
-    function symbol() external view returns (string memory);
+    function allowance(address owner, address spender) public view returns (uint256) {
+        return _allowances[owner][spender];
+    }
 
-    /// @notice Returns the decimals places of the token.
-    function decimals() external view returns (uint8);
+
+    function approve(address spender, uint256 value) external returns (bool) {
+        if (spender == address(0)) {
+            revert ("Invalide Spender");
+        }
+
+        _allowances[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
+        return true;
+
+    }
+
+
+    function transferFrom(address from, address to, uint256 value) external returns (bool) {
+        if (_allowances[from][msg.sender] < value) {
+            revert ("Insufficient allowance");
+        }
+
+        _allowances[from][msg.sender] -= value;
+        _transfer(from, to, value);(from, to ,value);
+        return true;  
+    }
+
+
+    function name() public view override returns (string memory) {
+        return name;
+    }
+
+    function symbol() public view override returns (string memory) {
+        return symbol;
+    }
+
 }
