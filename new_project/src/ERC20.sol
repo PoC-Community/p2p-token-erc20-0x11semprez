@@ -3,8 +3,8 @@ pragma solidity >=0.8.0;
 import {IERC20} from "./interface/IERC20.sol";
 
 contract ERC20 is IERC20 {
-    string public name = "fre ";
-    string public symbol = "rettr";
+    string public name = "GOLDEN DAWN";
+    string public symbol = "HOGDO";
     uint8 public decimals = 18;
     uint private _totalSupply;
 
@@ -31,7 +31,7 @@ contract ERC20 is IERC20 {
         if (from == address(0)) {
             revert("Invalid Provider");
         }
-        if (to = address(0)) {
+        if (to == address(0)) {
             revert("Invalid Sender");
         }
         if (_balances[from] < value) {
@@ -77,14 +77,4 @@ contract ERC20 is IERC20 {
         _transfer(from, to, value);(from, to ,value);
         return true;  
     }
-
-
-    function name() public view override returns (string memory) {
-        return name;
-    }
-
-    function symbol() public view override returns (string memory) {
-        return symbol;
-    }
-
 }
